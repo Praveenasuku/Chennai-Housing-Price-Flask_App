@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chennai House Price Estimator</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <h1>Chennai House Price Estimator</h1>
+      <p>Estimate a property's price and a realistic range from its locality, size and features.</p>
+    </div>
+  </header>
+
+  <main class="wrap grid">
+    <form method="post" class="card" novalidate>
+      <h2>Property details</h2>
+      <div class="fields">
+        {% for field, label in [("locality", "Locality"), ("property_type", "Property type"), ("furnishing", "Furnishing")] %}
+        <label>{{ label }}
+          <select name="{{ field }}">
+            {% for option in choices[field] %}
+            <option value="{{ option }}" {% if values[field] == option %}selected{% endif %}>{{ option }}</option>
+            {% endfor %}
+          </select>
+          {% if errors[field] %}<span class="error">{{ errors[field] }}</span>{% endif %}
+        </label>
+        {% endfor %}
+
+        {% for field, label in [("area_sqft", "Built-up area (sq ft)"), ("bedrooms", "Bedrooms"), ("bathrooms", "Bathrooms"),
+                                ("age_years", "Building age (years)"), ("floor", "Floor"), ("dist_main_road_m", "Distance to main road (m)")] %}
+        <label>{{ label }}
+          <input type="number" name="{{ field }}" value="{{ values[field] }}" inputmode="numeric">
+          {% if errors[field] %}<span class="error">{{ errors[field] }}</span>{% endif %}
+        </label>
+        {% endfor %}
+      </div>
+      <div class="checks">
+        <label class="check"><input type="checkbox" name="parking" value="1" {% if values.parking in [True, "1", "on", "true"] %}checked{% endif %}> Covered parking</label>
+        <label class="check"><input type="checkbox" name="near_metro" value="1" {% if values.near_metro in [True, "1", "on", "true"] %}checked{% endif %}> Within walking distance of a metro station</label>
+      </div>
+      <button type="submit">Estimate price</button>
+    </form>
+
+    <section class="card result">
+      {% if result %}
+        <h2>Estimated price</h2>
+        <p class="price">{{ result.display.price }}</p>
+        <p class="range">Likely range: <strong>{{ result.display.low }}</strong> to <strong>{{ result.display.high }}</strong></p>
+        <p class="muted">8 in 10 similar properties fall inside this range.</p>
+        <dl>
+          <div><dt>Price per sq ft</dt><dd>{{ result.display.per_sqft }}</dd></div>
+          <div><dt>Locality</dt><dd>{{ values.locality }}</dd></div>
+          <div><dt>Type</dt><dd>{{ values.property_type }}, {{ values.area_sqft }} sq ft</dd></div>
+        </dl>
+      {% else %}
+        <h2>Your estimate</h2>
+        <p class="muted">Fill in the details and click <strong>Estimate price</strong>. You'll get a point estimate, a realistic price range and the price per square foot.</p>
+      {% endif %}
+      <p class="note">Demo model: trained on <strong>synthetic</strong> data modelled on Chennai localities, not real listings. Don't use it to value real property.</p>
+    </section>
+  </main>
+
+  <footer class="wrap muted">JSON API: <code>POST /api/predict</code> · Built with Flask and scikit-learn</footer>
+</body>
+</html>

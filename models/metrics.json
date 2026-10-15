@@ -1,0 +1,33 @@
+{
+  "version": "1.0.0",
+  "data": "synthetic (see chennai_housing/simulate.py)",
+  "rows": 6000,
+  "cv_comparison": {
+    "ridge": {
+      "mae_inr": 1631990,
+      "mape": 0.1059,
+      "r2": 0.8542
+    },
+    "random_forest": {
+      "mae_inr": 1378030,
+      "mape": 0.0924,
+      "r2": 0.9434
+    },
+    "hist_gradient_boosting": {
+      "mae_inr": 1180299,
+      "mape": 0.079,
+      "r2": 0.958
+    }
+  },
+  "selected_model": "hist_gradient_boosting",
+  "test": {
+    "mae_inr": 1188470,
+    "mape": 0.0792,
+    "r2": 0.9666
+  },
+  "range_80pct_coverage": 0.8,
+  "range_multipliers": [
+    0.8805,
+    1.1353
+  ]
+}
